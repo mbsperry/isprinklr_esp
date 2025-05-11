@@ -2,7 +2,7 @@
 
 Creates a simple REST API for controlling a Hunter Pro-c sprinkler system using an Esp32 device. The project supports both Ethernet and WiFi connectivity, with options to use either one exclusively or automatically select the best available connection.
 
-This replaces the previous Arduino Uno device that was controlled via serial connect. I was having a number of issues with serial permissions and needing to be manually reset after power outages. Using an ESP32 with network connectivity eliminates those issues.
+This replaces the previous Arduino Uno device that was controlled via serial connect. I was having a number of issues with serial permissions and needing to manually reset after power outages. Using an ESP32 with network connectivity eliminates those issues.
 
 HunterRoam library used from https://github.com/ecodina/hunter-wifi (see HunterRoam.cpp for attributions).
 
@@ -38,7 +38,7 @@ The project can be built with different network connectivity options:
    platformio run -e wifi
    ```
 
-When using WiFi mode, you must set environment variables for your WiFi credentials (see below).
+When using WiFi mode, you must set your WiFi credentials directly in the platformio.ini file (see below).
 
 ### Fixed IP Configuration
 You can configure the device to use a static IP address by uncommenting and modifying the fixed IP settings in the `platformio.ini` file:
@@ -57,58 +57,23 @@ You can configure the device to use a static IP address by uncommenting and modi
 Simply remove the semicolons to uncomment the lines and adjust the IP addresses as needed for your network. The fixed IP settings will be applied to both Ethernet and WiFi connections.
 
 ### WiFi Credentials
-To keep your WiFi credentials secure and out of your Git repository, the project now uses environment variables to set your WiFi credentials. You can set these in several ways:
+To use WiFi connectivity, you need to directly edit the WiFi credentials in the `platformio.ini` file:
 
-1. **Set environment variables before building**:
-   ```bash
-   # Linux/macOS
-   export WIFI_SSID="YourSSID"
-   export WIFI_PASSWORD="YourPassword"
-   platformio run -e wifi
-
-   # Windows (CMD)
-   set WIFI_SSID=YourSSID
-   set WIFI_PASSWORD=YourPassword
-   platformio run -e wifi
-   
-   # Windows (PowerShell)
-   $env:WIFI_SSID="YourSSID"
-   $env:WIFI_PASSWORD="YourPassword"
-   platformio run -e wifi
+1. Find the WiFi environment section in your platformio.ini file:
+   ```ini
+   [env:wifi]
+   platform = https://github.com/pioarduino/platform-espressif32/releases/download/stable/platform-espressif32.zip
+   board = waveshare_esp32s3_eth
+   build_flags = 
+     ${env.build_flags}
+     -D NETWORK_MODE=2
+     '-D WIFI_SSID="<YOUR_SSID>"'
+     '-D WIFI_PASSWORD="<YOUR_PASSWORD>"'
    ```
 
-2. **Create a local environment file**:
-   Create a file named `.env` in your project root (which should be added to `.gitignore`):
-   ```
-   WIFI_SSID=YourSSID
-   WIFI_PASSWORD=YourPassword
-   ```
-   
-   Then source this file before building:
-   ```bash
-   # Linux/macOS
-   source .env
-   platformio run
-   ```
-
-3. **For VSCode users**:
-   You can set these in your VSCode settings by adding to `.vscode/settings.json`:
-   ```json
-   {
-     "terminal.integrated.env.linux": {
-       "WIFI_SSID": "YourSSID",
-       "WIFI_PASSWORD": "YourPassword"
-     },
-     "terminal.integrated.env.osx": {
-       "WIFI_SSID": "YourSSID",
-       "WIFI_PASSWORD": "YourPassword"
-     },
-     "terminal.integrated.env.windows": {
-       "WIFI_SSID": "YourSSID",
-       "WIFI_PASSWORD": "YourPassword"
-     }
-   }
-   ```
+2. Replace `<YOUR_SSID>` with your actual WiFi network name (SSID)
+3. Replace `<YOUR_PASSWORD>` with your actual WiFi password
+4. Build the project with: `platformio run -e wifi`
 
 ### Installation Steps
 1. Build and install iSprinklr_esp using PlatformIO with your preferred network configuration
