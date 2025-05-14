@@ -147,9 +147,10 @@ void WebServer::setupRoutes() {
                     return;
                 }
                 
-                // Validate minutes is within valid range (1-120)
-                if (minutes < 1 || minutes > 120) {
-                    request->send(400, "application/json", "{\"error\":\"Minutes must be between 1 and 120\"}");
+                // Validate minutes is within valid range (0-120)
+                // Allow 0 minutes for testing stop functionality (HunterRoam::stopZone uses 0 minutes)
+                if (minutes < 0 || minutes > 120) {
+                    request->send(400, "application/json", "{\"error\":\"Minutes must be between 0 and 120\"}");
                     return;
                 }
                 
